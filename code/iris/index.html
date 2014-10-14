@@ -18,7 +18,7 @@
 		<a href="/">Home</a>
 		<a href="/news">News</a>
 		<a href="/code">Code</a>
-		<a href="/article">Articles</a>
+		<!--<a href="/article">Articles</a>-->
 		<a href="/about">About</a>
 	</div>
 	<div class="main">
@@ -120,7 +120,7 @@ TODO: TBA-->
 </pre>
 
 <h3 id="extending-the-iris-views">Extending the IRIS Views</h3>
-<p>Since IRIS was designed to allow for an easy extension of new features, the idea of interface-based components was also applied to the integration of GUI related elements. In order to enable the usage of new views for different ways to display and access information (e.g. a custom deploy maps or other chart types), they only have to be connected to IRIS by implementing the “GUIModule” interface class which then acts as a bridge between the (possibly completely independent) GUI component and IRIS. For basic integration, it is sufficient to provide a name for the module and the component to be added to IRIS. To optionally gain access to further functionalities and increase the effectiveness of the correspondent module, a handler for pre-defined IRIS events can be implemented as well as entries for a menu bar and module related information.</p>
+<p>Since IRIS was designed to allow for an easy extension of new features, the idea of interface-based components was also applied to the integration of GUI related elements. In order to enable the usage of new views for different ways to display and access information (e.g. custom deploy maps or other chart types), they only have to be connected to IRIS by implementing the “GUIModule” interface class which then acts as a bridge between the (possibly completely independent) GUI component and IRIS. For basic integration, it is sufficient to provide a name for the module and the component to be added to IRIS. To optionally gain access to further functionalities and increase the effectiveness of the correspondent module, a handler for pre-defined IRIS events can be implemented as well as entries for a menu bar and module related information.</p>
 
 <p>The following shows the code, necessary for including a new debugging view into IRIS:</p>
 
