@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- Use title if it's in the page YAML frontmatter -->
+	<title>IRIS</title>
+
+	<link href="/css/style.css" rel="stylesheet" type="text/css" /><link href="/css/rouge.css" rel="stylesheet" type="text/css" />
+	<!-- <script src="/js/all.js" type="text/javascript"></script> -->
+</head>
+
+<body class="code code_iris code_iris_index">
+<div class="container">
+	<div class="nav-global">
+		<h1> &nbsp;</h1>
+		<a href="/">Home</a>
+		<a href="/news">News</a>
+		<a href="/code">Code</a>
+		<a href="/article">Articles</a>
+		<a href="/about">About</a>
+	</div>
+	<div class="main">
+
+<h1 id="iris">IRIS</h1>
+
+<p><a href="/code/iris/IRIS_gui_overview_full.png"><img alt="IRIS Gui" src="/code/iris/IRIS_gui_overview_small.png" /></a></p>
+
+<p>IRIS<sup id="fnref:IRIS_Name"><a href="#fn:IRIS_Name" class="footnote">1</a></sup> is an integrated and flexible solution for experiment management and data analysis for Wireless Sensor Networks. For an end user, IRIS provides routines for automated installation of TinyOS applications, options for collecting data from various sources and options for processing, visualization and logging such data. For a developer, it provides a rich set of libraries to assemble a user interface customized for arbitrary applications. </p>
+
+<p>IRIS is written in Java which makes it platform independent. However, it depends on some external libraries like TinyOS which some might find to be installed under Linux. This tool and all of its components are developed by the <a title="Networked Embedded Systems" href="http://www.nes.uni-due.de/home/">NES group</a> of the University of Duisburg-Essen. It was developed as part of the EU project <a title="PLANET" href="http://www.planet-ict.eu">PLANET</a>.</p>
+
+<p>The following paragraphs describe:</p>
+
+<ul>
+  <li>How to <a href="#install">install IRIS</a></li>
+  <li>How to <a href="#usage">use IRIS</a> for data collection, processing and visualization</li>
+  <li>How to <a href="#extend">extend IRIS</a> through plugins</li>
+  <li>How to <a href="#contribute">contribute to IRIS</a></li>
+  <li>Where to find <a href="#similarPrograms">programs similar to IRIS</a></li>
+</ul>
+
+<h2 id="a-nameinstallainstallation"><a name="install"></a>Installation</h2>
+
+<p>IRIS can be downloaded as a <a title="Maven" href="http://maven.apache.org/">Maven</a> project at <a title="IRIS" href="https://github.com/wsntools/iris">GitHub</a>.</p>
+
+<h3 id="installation-steps">Installation Steps</h3>
+
+<ul>
+  <li>Install <a href="http://git-scm.com/downloads">GIT</a> </li>
+  <li>Install <a href="http://maven.apache.org/guides/getting-started/maven-in-five-minutes.html">Maven</a></li>
+  <li>Install <a href="http://tinyos.stanford.edu/tinyos-wiki/index.php/Installing_TinyOS">TinyOS</a> (This step is optional, if you don’t install TinyOS, some features of IRIS won’t work).</li>
+  <li>Make sure that the tinyos.jar is in your CLASSPATH</li>
+  <li>Checkout IRIS from <a href="https://github.com/wsntools/iris">GitHub</a>: <code>git clone https://github.com/wsntools/iris.git</code></li>
+  <li>Go to the IRIS directory and run
+    <ul>
+      <li><code>mvn compile</code> </li>
+      <li><code>mvn exec:java -Dexec.mainClass="com.wsntools.iris.main.RadioMonitoringTool"</code></li>
+    </ul>
+  </li>
+</ul>
+
+<p>Thats it. Now you should be able to see the user interface of IRIS!</p>
+
+<h2 id="a-nameusageausage-guidelines"><a name="usage"></a>Usage Guidelines</h2>
+
+<h3 id="automated-application-installation">Automated Application Installation</h3>
+<p><a href="/code/iris/IRIS_gui_deploy_full.png"><img alt="IRIS Application Installation" src="/code/iris/IRIS_gui_deploy_small.png" /></a><br />
+To automate application installation, the user needs to provide two configuration files which specify a list of application node IDs with the TinyOS applications to be installed, and a list of the IDs with their hardware addresses, respectively. IRIS also provides utilities to generate these lists easily. Once both lists are available, the user can attach any number of nodes to the USB ports and start an automated application installation. IRIS installs intended applications on all attached nodes automatically.</p>
+
+<h3 id="processing">Processing</h3>
+<p><a href="/code/iris/IRIS_gui_function_addConst_full.png"><img alt="IRIS Function LMS" src="/code/iris/IRIS_gui_function_addConst_small.png" /></a><br />
+IRIS provides an innovative way for extending its processing capabilities by flexibly defining application-specific functions for processing data at the packet level. These functions can be applied to collected data during runtime or a posteriori. Such feature is especially useful for runtime data analysis, application debugging and customized logging. <br />
+The user can initiate a function instance by wiring the target attributes to the input ports and deciding on the constant values during/after the experiment. Currently, IRIS provides a rich set of function templates for data processing. However, the user can easily extend it with user-defined templates written in Java (see <a href="#extend">Extending IRIS</a>).<br />
+Functions are composable, meaning that the a function instance can take the output of another instance as input. With composable function templates, the user can implement a variety of data processing algorithms that directly access the data without redundant storing and retrieving for further processing, and thus can obtain the experiment result with less storage resources and significantly reduced time.<br />
+IRIS provides a large number of mathematical and WSN specific function templates that can be customized for WSN monitoring and controlling. The predefined set of templates include simple arithmetic functions like addition and subtraction, as well as more complex function templates like a customizable least mean square algorithm for value prediction.</p>
+
+<h3 id="wsn-interaction">WSN interaction</h3>
+<p>To collect data from traditional WSNs, IRIS can be connected to one or several base stations via serial ports. Every base station collects messages converts the message fields into IRIS attributes and stores it in the IRIS data model.</p>
+
+<p><a href="/code/iris/IRIS_gui_sending_full.png"><img alt="IRIS Function LMS" src="/code/iris/IRIS_gui_sending_small.png" /></a><br />
+System Interaction IRIS allows the user to control the experiment flow and to interact with the deployed WSN by dispatching the arbitrary user-defined AM messages. Such feature is advantageous for adjusting experiment parameters and for program debugging. To send a message to the WSN, the user needs to connect IRIS with one or more base stations, and to specify three parameters: the message template (type), the attribute values and the base station responsible for sending the message.</p>
+
+<p>To extend the set of TinyOS messages, the user has to create a mig template that represents the message structure. This can be done by the following command </p>
+
+<p><code>mig java -target=null -java-classname=$structName $fileName $structName -o $javaName</code>. </p>
+
+<p>The resulting file must be placed under the IRIS directories mote/receiving or more/sending respectively.</p>
+
+<p>Incoming and outgoing messages are logged automatically. The user can define application-specific format for every incoming or outgoing message. Together with the IRIS Functions it is possible to define functions to directly manipulate collected raw data and to store the end result to a log file freely. This bypasses the step of raw data storing and therefore greatly increases the efficiency.</p>
+
+<h3 id="visualization">Visualization</h3>
+<p><a href="/code/iris/IRIS_gui_views_full.png"><img alt="IRIS Function LMS" src="/code/iris/IRIS_gui_views_small.png" /></a><br />
+The visualization and user control interfaces are basic and yet important features for a tool like IRIS. The provided base user interface of IRIS consists of several parts for the user input and for visualizing the experiment data. Through the IRIS’ GUI, the user can perform experiment management, including creating an experiment profile, initiating data collection, sending control messages, store/load the experiment data, defining the function instances for data processing, etc. For each measurement, IRIS first displays general information about the measurement. When the data is available, the Packet View displays the content of the messages based on their attributes and can be customized to only show required attributes. Additionally, IRIS is integrated with <a title="JFreeChart" href="http://www.jfree.org/jfreechart/">JFreeChart</a>, a library for generating line charts or bar charts in a graph view. It allows the user to zoom into the chart, to save pictures of generated charts and to change the scale of the view for a better visualization of any attribute. Moreover, IRIS provides a map view based on the <a title="World Wind" href="http://worldwind.arc.nasa.gov/java/">Worldwind Java SDK</a> for the visualization of spatial data. Like the graph view, the map view allows zooming and saving pictures of the displayed area. Finally, different data views can be arbitrary combined together to produce an interface for the final user, which is customized with respect to the specific application requirements.</p>
+
+<h3 id="customizing-the-iris-user-interface">Customizing the IRIS User Interface</h3>
+<p>IRIS aims to be as customizable as possible to fit the user’s requirements. Therefore the whole GUI was designed in a modular way, allowing to use only the components necessary for the intended tasks. Besides the (de-)activation of (un-)required modules, it is further possible to control how they should be displayed (e.g. integrated within the main window or in separate windows) for even more customization and how they are updated in case certain events occur to maximize the performance and to avoid slowdowns if for example large amounts of incoming data would continuously trigger computationally intensive functions which are not necessary for any received packet.<br />
+IRIS provides several views, fulfilling different tasks like a packet view to inspect the content of received messages, a communication panel to handle network related tasks, a visualization component and even a map view to inspect a node’s position on the globe (if geographic information are available). All of them can be combined in any way to achieve high flexibility and an efficient workflow when working with IRIS.</p>
+
+<!--### Experiment Management
+TODO: TBA-->
+
+<!--### Flash Reading
+TODO: TBA-->
+
+<h2 id="a-nameextendaextending-iris"><a name="extend"></a>Extending IRIS</h2>
+
+<h3 id="extending-functions">Extending Functions</h3>
+<p>In IRIS, a function is created via the definition of a function template, which specifies the number of input attributes (ports) and the number of static configuration values. </p>
+
+<p>IRIS allows the user to process the experiment data by defining customized function templates, which can be categorized into three types. The first type is the monitoring function, which produces no output value but only examines the attribute values of incoming messages. They can be used, e.g., for implementing an alarm function, which displays a warning message when an attribute value reaches a certain threshold. The second type is the scalar function, which only outputs a scalar value. This function is normally used to generate an aggregated result such as Packet Reception Rate (PRR). The last type of functions outputs a new attribute. Most data processing functions fall into this category. Such functions are normally defined to process the original message values in order to generate a new value, e.g., filtering functions and transformation functions. Please note that the size of the output attribute (the number of messages it includes) can outnumber the size of the input attributes. Through this its possible defining functions can be used for prediction and future value estimation as it it necessary for some algorithms related to model driven data acquisition. The newly defined function template must be implemented in Java and the compiled class must be placed in modules.functions so that it is available to IRIS. The user defines the function logic by overriding the method computeData(), which is invoked every time a new packet is received. The following shows an example of a snipped definition of a CC2420 RSSI conversion function template.</p>
+
+<pre class="highlight java">  <span class="kd">public</span> <span class="kt">float</span><span class="o">[]</span> <span class="nf">computeData</span><span class="p">(</span><span class="kt">float</span><span class="o">[][]</span> <span class="n">val</span><span class="o">,</span> <span class="kt">float</span><span class="o">[]</span> <span class="n">set</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">float</span><span class="o">[]</span> <span class="n">res</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">float</span> <span class="o">[</span><span class="n">val</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="na">length</span><span class="o">];</span>
+    <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">val</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span>
+      <span class="n">res</span> <span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="n">i</span><span class="o">]-</span><span class="mi">45</span><span class="o">;</span>
+    <span class="k">return</span> <span class="n">res</span><span class="o">;</span>
+  <span class="o">}</span>
+</pre>
+
+<h3 id="extending-the-iris-views">Extending the IRIS Views</h3>
+<p>Since IRIS was designed to allow for an easy extension of new features, the idea of interface-based components was also applied to the integration of GUI related elements. In order to enable the usage of new views for different ways to display and access information (e.g. a custom deploy maps or other chart types), they only have to be connected to IRIS by implementing the “GUIModule” interface class which then acts as a bridge between the (possibly completely independent) GUI component and IRIS. For basic integration, it is sufficient to provide a name for the module and the component to be added to IRIS. To optionally gain access to further functionalities and increase the effectiveness of the correspondent module, a handler for pre-defined IRIS events can be implemented as well as entries for a menu bar and module related information.</p>
+
+<p>The following shows the code, necessary for including a new debugging view into IRIS:</p>
+
+<pre class="highlight java">  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">GUI_TestPacketInsertion</span> <span class="kd">extends</span> <span class="n">IRIS_GUIModule</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">PanelTestBarPacketInsertion</span> <span class="n">panelTestbar</span><span class="o">;</span>
+  
+    <span class="kd">public</span> <span class="n">GUI_TestPacketInsertion</span><span class="o">(</span><span class="n">Model</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
+      <span class="kd">super</span><span class="o">(</span><span class="n">m</span><span class="o">);</span>
+      <span class="n">panelTestbar</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PanelTestBarPacketInsertion</span><span class="o">(</span><span class="n">m</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">getModuleName</span><span class="o">()</span> <span class="o">{</span>
+     <span class="k">return</span> <span class="s">"(Test) Packet Insertion"</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">getModuleDescription</span><span class="o">()</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="s">"create random packets for debugging"</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">JPanel</span> <span class="n">getGUIPanel</span><span class="o">()</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="n">panelTestbar</span><span class="o">;</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+</pre>
+
+<!--### Extending Middleware Adapter
+TODO:add text here-->
+
+<h2 id="a-namecontributeacontributing-to-iris"><a name="contribute"></a>Contributing to IRIS</h2>
+
+<p>We are trying our best to make IRIS a good experience to you. However, we are not perfect and so is our code. If you find any problems when running IRIS, please let us know by open a ticket in our <a href="https://github.com/wsntools/iris/issues">bug tracker</a>. When writing a new ticket, please describe the problem as specific as possible. Every minute that you spend in describing the problem might save us hours in finding a solution.<br />
+Of course we are also happy for any code contribution. If you are interested in contributing a patch or a new feature, please contact one of the following active developers:</p>
+
+<ul>
+  <li>Richard Figura: richard.figura[at]uni-due.de</li>
+  <li>Sascha Jungen: sascha.jungen[at]uni-due.de</li>
+  <li>Sascha Hevelke: sascha.hevelke[at]stud.uni-due.de</li>
+  <li>Marvin Baudewig: marvin.baudewig[at]stud.uni-due.de</li>
+</ul>
+
+<h2 id="a-namesimilarprogramsasimilar-programs"><a name="similarPrograms"></a>Similar Programs</h2>
+
+<p>Of course we are trying to make IRIS the perfect candidate for experiment management, data analysis and visualization. To the best of our knowledge, IRIS is the first tool that provides an integrated solution for the above issues and offers a flexible mechanism for the user to define application-specific processing functions to meet the specific requirements of various applications and deployments.<br />
+However everybody has its own requirements on the toolset he uses and sometimes IRIS might not provide the right capabilities to meet those requirements. The following provides a list of programs, that we find interesting. Each of those programs is unique in the features it provides. For each category of programs, we add a list of differences to IRIS.</p>
+
+<h3 id="wsn-link-quality-analyzer">WSN Link Quality Analyzer</h3>
+
+<p>Similar to IRIS, these tools offer a user interface allowing users to interact with the testing nodes that gather network parameters, to visualize the data packets and to process/analyse the data. The difference is that these tools gather raw data packet statistics such as received signal strength (RSSI), link quality indicator (LQI), noise floor, and define a fixed set of performance metrics, e.g., packet delivery, temporal and spatial correlations and link asymmetries. IRIS does not limit the processing data type and allows the user to define application-specific processing functions. We note that IRIS can share similar functionality if the same metrics are defined as IRIS functions. Both are available as open source.</p>
+
+<ul>
+  <li><a title="SWAT: Enabling Wireless Network Measurements" href="http://sing.stanford.edu/swat/">SWAT</a></li>
+  <li><a title="TRIDENT" href="http://wirelesstrident.sourceforge.net/">TRIDENT</a></li>
+</ul>
+
+<h3 id="languages-for-efficient-data-processing">Languages for Efficient Data Processing</h3>
+
+<p>The following provides a list of notable technical languages and toolsets for performance analysis, algorithm development and model design. They also provide a rich set of built-in mathematical functions for a wide range of applications such as communication, signal processing, computational biology, etc. However they do not provide any integration for wireless sensor networks nor the flexibility of IRIS to integrate other data sources.</p>
+
+<p>Open Source:</p>
+
+<ul>
+  <li><a href="http://www.gnu.org/software/octave/">Octave</a></li>
+  <li><a href="http://www.r-project.org/">R-project</a></li>
+  <li><a href="http://scidavis.sourceforge.net/">Sci-Davis</a></li>
+  <li><a href="http://labplot.sourceforge.net/">LabPlot</a></li>
+</ul>
+
+<p>Proprietary:</p>
+
+<ul>
+  <li><a href="http://www.mathworks.de/products/matlab/">MATLAB</a></li>
+  <li><a href="http://www-01.ibm.com/software/de/analytics/spss/">IBM SPSS</a></li>
+</ul>
+
+<h3 id="spatial-data-analysis">Spatial Data Analysis</h3>
+
+<p>Spatial analysis can be supported by programs like the following. While these tools are powerful for data processing, they cannot be used for run-time WSN data analysis. </p>
+
+<p>Open Source</p>
+
+<ul>
+  <li><a href="http://www.qgis.org/en/site/">QGIS</a></li>
+  <li><a href="http://grass.osgeo.org/">GRASS</a></li>
+</ul>
+
+<p>Proprietary</p>
+
+<ul>
+  <li><a href="https://www.arcgis.com">ArcGIS</a></li>
+</ul>
+
+<h3 id="wsn-data-collection-and-analysis">WSN Data Collection and Analysis</h3>
+
+<p>Commonly used for WSN data collection and visualization. However, they have limited capabilities for data processing.</p>
+
+<ul>
+  <li><a href="http://www.willow.co.uk/html/mote-view_client_software.php">MOTE-VIEW</a></li>
+  <li><a href="https://github.com/itm/spyglass">SpyGlass</a></li>
+  <li><a href="https://code.google.com/p/vizzly/">Vizzly</a></li>
+  <li><a href="http://ieeexplore.ieee.org/xpl/login.jsp?tp=&amp;arnumber=5683876&amp;url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D5683876">Netviewer</a></li>
+  <li><a href="www.csi.ucd.ie/content/octopus-dashboard-sensor-networks-visual-control">Octopus</a></li>
+  <li><a href="http://www.wsnapp.wislab.cz/">SensMap</a></li>
+</ul>
+
+<h3 id="research-articles">Research articles</h3>
+
+<p>Further tools that are not available for dowloading</p>
+
+<ul>
+  <li><a href="http://dl.acm.org/citation.cfm?id=1995232">RadiaLE</a></li>
+  <li><a href="http://ieeexplore.ieee.org/xpl/login.jsp?tp=&amp;arnumber=6254335&amp;url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D6254335">Nviz</a></li>
+  <li><a href="http://www.sciencedirect.com/science/article/pii/S157087051400047X">DISON</a></li>
+</ul>
+
+<h2 id="license-information">License information</h2>
+<p>The IRIS source code is subject to the terms of the Mozilla Public License, v.2.0. If a copy of the MPL was not distributed with one of the files, You can obtain one at <a href="https://www.mozilla.org/MPL/2.0/">http://mozilla.org/MPL/2.0/</a>.</p>
+
+<h2 id="publications-related-to-iris">Publications related to IRIS</h2>
+
+<p>Richard Figura, Sascha Jungen, Ramin Soleymani, Chia-Yen Shih and Pedro José Marrón. Demo Abstract: IMAC, Enabling Flexible Configuration and Result Analysis for Diverse Wireless Sensor Network Experiments. <a title="EWSN-Demo-Paper 2012" href="http://ewsn12.disi.unitn.it/posters.html">In 9th European Conference on Wireless Sensor Networks, February 2012 (EWSN).</a></p>
+
+<p>Richard Figura, Chia-Yen Shih, Songwei Fu, Roberta Daidone, Sascha Jungen and Pedro José Marrón. IRIS: A Flexible and Extensible Experiment Management and Data Analysis Tool for Wireless Sensor Networks. <a title="S-CUBE 2013" href="http://dx.doi.org/10.1007/978-3-319-04166-7_7">In 4th International Conference on Sensor Systems and Software (S-CUBE), June 2013.</a> </p>
+
+<div class="footnotes">
+  <ol>
+    <li id="fn:IRIS_Name">
+      <p>After the Greek goddess IRIS for the meaning for messaging and communication. <a href="#fnref:IRIS_Name" class="reversefootnote">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+
+	</div>
+	<div class="nav-local">
+		nav local
+	</div>
+</div><!-- /container -->
+
+</body>
+</html>
