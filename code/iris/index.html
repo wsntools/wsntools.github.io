@@ -146,8 +146,27 @@ TODO: TBA-->
   <span class="o">}</span>
 </pre>
 
-<!--### Extending Middleware Adapter
-TODO:add text here-->
+<h3 id="extending-middleware-adapter">Extending Middleware Adapter</h3>
+
+<p>IRIS provides interfaces to read/send data from/to arbitrary sources, which allows the user to decide on incoming/outgoing port (e.g. “/dev/ttyUSB0”) during runtime. For this IRIS provides two classes, the Datacollectors and the SendingManager for receiving and sending messages respectively. I either way, IRIS distinguishes between the decoding/encoding process and the actual transmission of data.</p>
+
+<h4 id="receiving">Receiving</h4>
+<p>To receive and parse messages, IRIS offers a base class for a collecting and a decoding respectively. Collectors are responsible for creating events once data is received over the specified port. The collector then hands the data to a decoder, which is capable of reading the messages content and parse it into a format suitable for the datamodel of IRIS. To implement your own receiving system for your desired datamodel, one has to:</p>
+
+<ul>
+  <li>Create a new subclass of AbstractCollector which registers on the desired port and recognizes incoming data on that port. This class also needs to provide the callback method messageReceived(HashMap) in which it calls the callback method of the overlying collector.</li>
+  <li>Create a new subclass of AbstractDecoder and implement the decode method. The last operation in this method has to be a call to the messageReceived method of the overlying collector.</li>
+</ul>
+
+<h4 id="sending">Sending</h4>
+<p>In a similar way, IRIS provides two abstractions for sending and encoding. First, the encoder has to be specified which then creates a message object. This message object is then given to a sender, responsible for sending it on a specified port. To implement your own sending system, one has to:</p>
+
+<ul>
+  <li>Create a new subclass of AbstractEncoder, responsible for selecting a message type and providing all fields of that message type with data.</li>
+  <li>Implement an ISender. This sender takes a encoder object and the port it should use to send the data.</li>
+</ul>
+
+<p>To demonstrate this feature, IRIS comes with an already built in TinyOS receiving/sending system.</p>
 
 <h2 id="a-namecontributeacontributing-to-iris"><a name="contribute"></a>Contributing to IRIS</h2>
 
