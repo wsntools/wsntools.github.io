@@ -50,8 +50,14 @@
 <ul>
   <li>Install <a href="http://git-scm.com/downloads">GIT</a> </li>
   <li>Install <a href="http://maven.apache.org/guides/getting-started/maven-in-five-minutes.html">Maven</a></li>
-  <li>Install <a href="http://tinyos.stanford.edu/tinyos-wiki/index.php/Installing_TinyOS">TinyOS</a> (This step is optional, if you don’t install TinyOS, some features of IRIS won’t work).</li>
-  <li>Make sure that the tinyos.jar is in your CLASSPATH</li>
+  <li>Install <a href="http://tinyos.stanford.edu/tinyos-wiki/index.php/Installing_TinyOS">TinyOS</a>
+    <ul>
+      <li>Make sure that the tinyos.jar is in your CLASSPATH and installed in your local Maven repository</li>
+      <li>To install the jar in your local Maven repository run</li>
+      <li><code>mvn install:install-file -Dfile={path to tinyos.jar} -DgroupId=net.tinyos -DartifactId=tinyos -Dversion=2.1.1 -Dpackaging=jar</code></li>
+      <li>(In Linux, the path to TOS normally is <code>$TOSROOT/support/sdk/java/tinyos.jar</code>)</li>
+    </ul>
+  </li>
   <li>Checkout IRIS from <a href="https://github.com/wsntools/iris">GitHub</a>: <code>git clone https://github.com/wsntools/iris.git</code></li>
   <li>Go to the IRIS directory and run
     <ul>
